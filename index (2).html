@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="詩境是一個結合本機唐詩資料庫與 Gemini API 的古典詩詞互動系統，可查詩、解詩、收藏與進行詩魂對話。"/>
+<meta property="og:title" content="詩境｜生成式 AI 古典詩詞互動系統"/>
+<meta property="og:description" content="用作者、詩名、詩句或意境召喚古典詩詞，支援本機 poems.json 與 Gemini API。"/>
+<meta property="og:type" content="website"/>
+<meta name="theme-color" content="#f5ede0"/>
+<title>詩境 · 通靈問詩</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23f5ede0'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' fill='%23a83232' font-family='serif'%3E%E8%A9%A9%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20260604-v142-home-examples"/>
+</head>
+<body>
+
+<!-- ══ 導覽列 ══ -->
+<nav class="nav">
+  <div class="nav-logo">詩 境</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-action="show-page" data-page="p1" type="button">通 靈 問 詩</button>
+    <button class="nav-tab" data-action="show-page" data-page="p2" type="button">雙 魂 對 話</button>
+    <button class="nav-tab" data-action="show-page" data-page="p3" type="button">詩 藏 <span class="collect-badge" id="collect-badge">0</span></button>
+  </div>
+  <div class="nav-api-wrap">
+    <div class="nav-api-status" aria-live="polite">
+      <div class="api-status-label">API 狀態</div>
+      <div class="api-status-pill s-local" id="api-status-pill">僅本機</div>
+    </div>
+    <button class="nav-api-btn" data-action="open-api-key-modal" type="button">API KEY</button>
+  </div>
+</nav>
+
+<!-- ══ 頁面1：通靈問詩 ══ -->
+<div class="page active" id="p1">
+  <div class="smoke-wrap">
+    <div class="censer-mini">
+      <div class="s"></div><div class="s"></div><div class="s"></div>
+      <svg width="56" height="44" viewBox="0 0 56 44" style="position:absolute;bottom:0">
+        <ellipse cx="28" cy="9" rx="18" ry="3" fill="none" stroke="#8b6f47" stroke-width="1"/>
+        <ellipse cx="28" cy="14" rx="18" ry="3" fill="#c9a978" stroke="#8b6f47" stroke-width="1"/>
+        <path d="M11 16 Q8 26 12 36 L44 36 Q48 26 45 16Z" fill="#c9a978" stroke="#8b6f47" stroke-width="1"/>
+        <line x1="14" y1="24" x2="42" y2="24" stroke="#8b6f47" stroke-width=".5" stroke-dasharray="2,3"/>
+        <rect x="9" y="36" width="38" height="3" fill="#8b6f47"/>
+        <path d="M12 39 L10 44 L17 44Z" fill="#6b4f1e"/>
+        <path d="M44 39 L46 44 L39 44Z" fill="#6b4f1e"/>
+      </svg>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>詩 境</h1>
+    <div class="hero-sub">— 與 千 年 詩 魂 對 話 —</div>
+  </div>
+
+  <div class="ritual-box">
+    <div class="ritual-label">— 心 中 所 念，何 詩 何 句 —</div>
+    <input id="poem-input" type="text" placeholder="作者、片段、意境皆可"/>
+    <div class="library-scope-note">本機詩庫目前主要收錄唐詩；宋詞或意境式查詢可貼上 Gemini API Key 後使用。</div>
+    <div class="example-group">
+      <div class="group-label">作 者</div>
+      <div class="ex-row">
+        <button class="ex-btn" data-action="fill-example" data-value="李白" type="button">李白</button>
+        <button class="ex-btn" data-action="fill-example" data-value="杜甫" type="button">杜甫</button>
+        <button class="ex-btn" data-action="fill-example" data-value="王維" type="button">王維</button>
+      </div>
+    </div>
+    <div class="example-group">
+      <div class="group-label">篇 名</div>
+      <div class="ex-row">
+        <button class="ex-btn" data-action="fill-example" data-value="靜夜思" type="button">靜夜思</button>
+        <button class="ex-btn" data-action="fill-example" data-value="春曉" type="button">春曉</button>
+        <button class="ex-btn" data-action="fill-example" data-value="登鸛雀樓" type="button">登鸛雀樓</button>
+      </div>
+    </div>
+    <div class="example-group">
+      <div class="group-label">片段與意境</div>
+      <div class="ex-row">
+        <button class="ex-btn" data-action="fill-example" data-value="床前明月光" type="button">床前明月光</button>
+        <button class="ex-btn" data-action="fill-example" data-value="近鄉情更怯" type="button">近鄉情更怯</button>
+        <button class="ex-btn" data-action="fill-example" data-value="北斗七星高" type="button">北斗七星高</button>
+      </div>
+    </div>
+    <button class="submit-btn" id="submit-btn" data-action="summon" type="button">焚 香 問 詩</button>
+    <button class="random-btn" id="random-btn" data-action="random-poem" type="button">🎲 隨 機 一 首</button>
+  </div>
+
+  <div class="loading-box" id="loading" aria-live="polite" aria-busy="true">
+    <div class="loading-panel">
+      <div class="loading-ornament">— 詩 境 通 靈 —</div>
+      <div class="loading-text" id="loading-text">點 燃 香 爐 ⋯</div>
+      <div class="loading-note">古 卷 翻 動，詩 魂 將 至</div>
+    </div>
+  </div>
+  <div id="output"></div>
+</div>
+
+<!-- ══ 頁面2：雙魂對話 ══ -->
+<div class="page" id="p2">
+  <div class="page2-title">雙 魂 對 話</div>
+  <div class="page2-sub">— 召 喚 兩 位 詩 人，就 主 題 展 開 詩 意 對 話 —</div>
+
+  <div class="setup-box">
+    <div class="setup-label">— 設 定 對 話 —</div>
+    <div class="setup-grid">
+      <div class="setup-col">
+        <label>詩 人 甲</label>
+        <select id="poet-a">
+          <option value="李白">李白（唐）</option>
+          <option value="杜甫">杜甫（唐）</option>
+          <option value="王維">王維（唐）</option>
+          <option value="白居易">白居易（唐）</option>
+          <option value="蘇軾">蘇軾（宋）</option>
+          <option value="李清照">李清照（宋）</option>
+          <option value="辛棄疾">辛棄疾（宋）</option>
+          <option value="陶淵明">陶淵明（東晉）</option>
+        </select>
+      </div>
+      <div class="setup-col">
+        <label>詩 人 乙</label>
+        <select id="poet-b">
+          <option value="蘇軾" selected>蘇軾（宋）</option>
+          <option value="李白">李白（唐）</option>
+          <option value="杜甫">杜甫（唐）</option>
+          <option value="王維">王維（唐）</option>
+          <option value="白居易">白居易（唐）</option>
+          <option value="李清照">李清照（宋）</option>
+          <option value="辛棄疾">辛棄疾（宋）</option>
+          <option value="陶淵明">陶淵明（東晉）</option>
+        </select>
+      </div>
+    </div>
+    <div class="topic-row">
+      <label>對 話 主 題</label>
+      <input id="d-topic" type="text" placeholder="月亮、離別、功名、人生無常…"/>
+    </div>
+    <button class="persona-toggle" data-action="toggle-persona" type="button">▸ 展 開 Persona 設 定（System Prompt）</button>
+    <div class="persona-panels" id="persona-panels">
+      <div class="persona-panel">
+        <label id="label-a">李白 Persona</label>
+        <textarea class="persona-textarea" id="persona-a"></textarea>
+        <button class="reset-persona-btn" data-action="reset-persona" data-persona="a" type="button">還原預設</button>
+      </div>
+      <div class="persona-panel">
+        <label id="label-b">蘇軾 Persona</label>
+        <textarea class="persona-textarea" id="persona-b"></textarea>
+        <button class="reset-persona-btn" data-action="reset-persona" data-persona="b" type="button">還原預設</button>
+      </div>
+    </div>
+    <button class="start-btn" id="start-btn" data-action="start-dialogue" type="button">召 喚 兩 位 詩 魂</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stage-header">
+      <div>
+        <div class="stage-info" id="stage-topic-label"></div>
+        <div class="stage-poets" id="stage-poets-label"></div>
+      </div>
+      <button class="stop-btn" data-action="stop-dialogue" type="button">終 止</button>
+    </div>
+    <div class="dialogue" id="dialogue"></div>
+    <div class="stage-status" id="stage-status"></div>
+    <div class="more-action-row">
+      <button class="more-btn" id="more-btn" data-action="continue-dialogue" type="button">繼 續 對 話</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 頁面3：詩藏 ══ -->
+<div class="page" id="p3">
+  <div class="page3-title">詩 藏</div>
+  <div class="page3-sub">— 你 召 喚 過 的 詩 魂 —</div>
+  <div id="col-content"></div>
+</div>
+
+
+
+<div class="api-modal-backdrop" id="api-key-modal" hidden>
+  <div class="api-modal" role="dialog" aria-modal="true" aria-labelledby="api-key-modal-title">
+    <button class="api-modal-close" type="button" data-action="close-api-key-modal" aria-label="關閉">×</button>
+    <div class="api-modal-title" id="api-key-modal-title">Gemini API Key</div>
+    <div class="api-modal-desc">
+      請貼上 Gemini API key。Key 只會暫存在本分頁 sessionStorage，關閉分頁後即清除；貼上後會延遲自動測試一次，並加入冷卻機制避免 Too many requests。隨機召喚與本機詩庫查詢不會改變 API 連線狀態。未輸入 key 時仍可使用本機詩庫與免費瀏覽器朗讀。
+    </div>
+    <input class="api-key-input" id="api-key-input" type="password" autocomplete="off" spellcheck="false" placeholder="貼上 Gemini API key"/>
+    <div class="api-modal-status" id="api-key-modal-status">未輸入 key 時會使用本機 poems.json 詩庫；貼上 key 後會受控自動測試一次。</div>
+    <div class="api-modal-actions">
+      <button class="api-modal-btn" type="button" data-action="clear-api-key">清除 Key</button>
+      <button class="api-modal-btn primary" type="button" data-action="close-api-key-modal">關閉</button>
+    </div>
+  </div>
+</div>
+<div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+<script src="app.js?v=20260604-v142-home-examples" defer></script>
+</body>
+</html>
